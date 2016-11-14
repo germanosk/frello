@@ -14,36 +14,7 @@ class Login extends CI_Controller
 
     public function index()
     {
-        $this->load->view('login');
-    }
-
-    public function new_user_registration()
-    {
-        $this->form_validation->set_rules('name', 'Name', 'trim|required');
-        $this->form_validation->set_rules('email', 'Email', 'trim|required');
-        $this->form_validation->set_rules('pass', 'Password', 'trim|required|matches[pass_ver]');
-        $this->form_validation->set_rules('pass_ver', 'Password', 'trim|required');
-        if ($this->form_validation->run() == FALSE)
-        {
-            $this->load->view('signup');
-        } else
-        {
-            $data = array(
-                'name' => $this->input->post('name'),
-                'email' => $this->input->post('email'),
-                'password' => sha1($this->input->post('pass'))
-            );
-            $result = $this->User_Database->registration_insert($data);
-            if ($result == TRUE)
-            {
-                $data['message_display'] = 'Registration Successfully !';
-                $this->load->view('signup', $data);
-            } else
-            {
-                $data['message_display'] = 'This account already exist!';
-                $this->load->view('signup', $data);
-            }
-        }
+        $this->load->view('v_login');
     }
 
     public function profile()
@@ -61,6 +32,25 @@ class Login extends CI_Controller
     {
 
         redirect(base_url());
+    }
+
+    public function authenticate()
+    {
+        $data = array(
+            'email' => $this->input->post('email'),
+            'password' => sha1($this->input->post('password'))
+        );
+        $result = $this->User_Database->login($data);
+        if ($result == TRUE)
+        {
+            $this->session->set_userdata("is_open_session", 1);
+            $this->session->set_userdata("email", $this->input->post('email'));
+            redirect(base_url('panel'));
+        } else
+        {
+            $data['erro'] = 'User / Password incorrect';
+            $this->load->view('v_login', $data);
+        }
     }
 
     public function logout()

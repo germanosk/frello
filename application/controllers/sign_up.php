@@ -14,65 +14,55 @@ class Sign_up extends CI_Controller
 
     public function index()
     {
-        $this->load->view('sign_up');
+        $this->new_user();
     }
 
-    public function authenticate()
+    private function new_user()
     {
-        $data = array(
-            'email' => $this->input->post('email'),
-            'password' => sha1($this->input->post('password'))
-        );
-        $result = $this->User_Database->login($data);
-        if ($result == TRUE)
-        {
-            $this->session->set_userdata("is_open_session", 1);
-            $this->session->set_userdata("email", $this->input->post('email'));
-            redirect(base_url('panel'));
-        } else
-        {
-            $data['erro'] = 'User / Password incorrect';
-            $this->load->view('v_login', $data);
-        }
-    }
-
-    public function user_registration_show()
-    {
-        $this->load->view('v_registration');
-    }
-
-    public function new_user_registration()
-    {
-        $this->form_validation->set_rules('name', 'Name', 'trim|required');
-        $this->form_validation->set_rules('email', 'Email', 'trim|required');
-        $this->form_validation->set_rules('pass', 'Password', 'trim|required|matches[pass_ver]');
-        $this->form_validation->set_rules('pass_ver', 'Password', 'trim|required');
+        $this->lang->load('form_validation');
+        
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('name', 'Name', 'trim|required',
+                        array('required'=>$this->lang->line('error_name_required',FALSE)));
+        $this->form_validation->set_rules('email', 'Email', 'trim|required|is_unique[user.email]',
+                        array('required' => $this->lang->line('error_email_required',FALSE),
+                            'is_unique' => $this->lang->line('error_email_is_unique',FALSE)));
+        $this->form_validation->set_rules('password', 'Password', 'trim|required|matches[confirm_password]',
+                        array('required' => $this->lang->line('error_password_required',FALSE),
+                            'matches' => $this->lang->line('error_password_matches',FALSE))
+                );
+        $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required');
+        
         if ($this->form_validation->run() == FALSE)
         {
-            $this->load->view('v_registration');
+            $this->load->view('v_sign_up');
         } else
         {
-            $data = array(
-                'name' => $this->input->post('name'),
-                'email' => $this->input->post('email'),
-                'password' => sha1($this->input->post('pass'))
-            );
-            $result = $this->User_Database->registration_insert($data);
-            if ($result == TRUE)
-            {
-                $data['message_display'] = 'Registration Successfully !';
-                $this->load->view('v_registration', $data);
-            } else
-            {
-                $data['message_display'] = 'This account already exist!';
-                $this->load->view('v_registration', $data);
-            }
+            $this->save_user();
         }
     }
+
+    private function save_user()
+    {
+        $data = array(
+            'name' => $this->input->post('name'),
+            'email' => $this->input->post('email'),
+            'password' => hash("sha512",$this->input->post('password'))
+        );
+        $result = $this->user_model->insert_user($data);
+        if ($result == TRUE)
+        {
+            $data['message_display'] = 'Registration Successfully !';
+        } else
+        {
+            $data['message_display'] = 'This account already exist!';
+        }
+        $this->load->view('v_sign_up', $data);
+    }
+
 
     public function profile()
     {
-
         $result = $this->User_Database->read_user_information($this->session->userdata('email'));
         $data = array(
             'name' => $result[0]->name,
@@ -83,7 +73,6 @@ class Sign_up extends CI_Controller
 
     public function back()
     {
-
         redirect(base_url());
     }
 
