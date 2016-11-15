@@ -1,7 +1,3 @@
-<?php
-        lang_load(array('form_view','button_view'));
-?>
-
 <form class="form-signin" role="form" method="post" action="<?= base_url('sign_up') ?>">
     <fieldset>
         <?php

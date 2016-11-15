@@ -19,4 +19,4 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link rel="stylesheet" href="./public/foundation/css/app.css">
   </head>
   <body>
-
+    <?php $this->load->view("/templates/language_bar.php"); ?>

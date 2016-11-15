@@ -1,5 +1,9 @@
 <?php
 /*
+ * Login Form
+ */
+$lang['header_login'] = 'Bem vindo ao Frello!';
+/*
  * Sign Up Form
  */
 $lang['header_sign_up'] = 'Junte-se a nós!';

@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Sign_up extends CI_Controller
+class Sign_up extends MY_Localized_controller
 {
     public function __construct()
     {
@@ -19,7 +19,7 @@ class Sign_up extends CI_Controller
 
     private function new_user()
     {
-        $this->lang->load('form_validation');
+        $this->lang_load('form_validation');
         
         $this->load->library('form_validation');
         $this->form_validation->set_rules('name', 'Name', 'trim|required',
@@ -35,6 +35,7 @@ class Sign_up extends CI_Controller
         
         if ($this->form_validation->run() == FALSE)
         {
+            $this->lang_load(array('form_view','button_view'));
             $this->load->view('v_sign_up');
         } else
         {
@@ -57,6 +58,8 @@ class Sign_up extends CI_Controller
         {
             $data['message_display'] = 'This account already exist!';
         }
+        
+        $this->lang_load(array('form_view','button_view'));
         $this->load->view('v_sign_up', $data);
     }
 

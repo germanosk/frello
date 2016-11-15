@@ -1,7 +1,3 @@
-<?php
-        $this->lang->load(array('form_view','button_view'));
-?>
-
 <form class="form-signin" role="form" method="post" action="<?= base_url('login/authenticate') ?>">
     <fieldset>
         <legend><?=$this->lang->line('header_login') ?></legend>

@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Login extends CI_Controller
+class Login extends MY_Localized_controller
 {
     public function __construct()
     {
@@ -14,6 +14,7 @@ class Login extends CI_Controller
 
     public function index()
     {
+        $this->lang_load(array('form_view','button_view'));
         $this->load->view('v_login');
     }
 
@@ -25,12 +26,12 @@ class Login extends CI_Controller
             'name' => $result[0]->name,
             'email' => $result[0]->email
         );
+        lang_load(array('form_view','button_view'));
         $this->load->view('v_profile', $data);
     }
 
     public function back()
     {
-
         redirect(base_url());
     }
 
